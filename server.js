@@ -1,12 +1,10 @@
 import { WebSocketServer } from 'ws';
 import crypto from 'crypto';
 
-
 const wss = new WebSocketServer({ port: 8080 });
 console.log("Websocket opened on port 8080")
 
 var connections = {};
-var inputs = {};
 
 wss.on('connection', function connection(ws, req)
 {
@@ -16,12 +14,7 @@ wss.on('connection', function connection(ws, req)
 
     connections[ws.id] = ws;
 
-    console.log('Client connected:', ws.io, ws.key);
-
-    if (ws.io === "input")
-    {
-        inputs[ws.key] = ws;
-    }
+    console.log('Client connected:', ws.id, ws.io, ws.key);
 
     ws.on('message', function incoming(message)
     {
@@ -40,13 +33,8 @@ wss.on('connection', function connection(ws, req)
 
     ws.on('close', function ()
     {
-        console.log('Client disconnected:', ws.io, ws.key);
+        console.log('Client disconnected:', ws.id, ws.io, ws.key);
 
         delete connections[ws.id];
-
-        if (inputs[ws.key] === ws)
-        {
-            delete inputs[ws.key];
-        }
     });
 });
